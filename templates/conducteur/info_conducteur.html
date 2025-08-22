@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+    <div class="h-screen w-screen flex flex-col items-center justify-center" style="height: 600px; margin-top: 100px;">
+      <div
+        class="border rounded-xl bg-gray-400/5 p-10 flex flex-col items-center justify-center gap-8" 
+      >
+        <img src="/static/images/login.png" class="max-h-[100px] h-[99px] w-[220px] rounded-full aspect-square object-cover px-4">
+        <div class="text-center">
+          <img src="/static/images/{{ user['user_img'] }}" class="w-40 h-40 py-1 rounded-full object-cover" style="margin-left: 77px; margin-top: -40px;">
+          <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table
+              class="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400 text-lg"
+            >
+              <tbody>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Name
+                  </th>
+                  <td class="px-6 py-4">
+                    {{ user['user_name'] }}
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    E-mail
+                  </th>
+                  <td class="px-6 py-4">
+                    {{ user['user_email'] }}
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Phone number
+                  </th>
+                  <td class="px-6 py-4">
+                    +212 {{ user['user_phone'] }}
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Voiture matricule
+                  </th>
+                  <td class="px-6 py-4">
+                    {{ driver.mat }}
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Voiture image
+                  </th>
+                  <td class="px-6 py-4">
+                    <a
+                      href="/static/images/{{ driver.voiture }}"
+                      download
+                      class="font-medium text-blue-600 :text-blue-500 hover:underline"
+                      >Download</a
+                    >
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Carte gris
+                  </th>
+                  <td class="px-6 py-4">
+                    <a
+                      href="/static/images/{{ driver.carte }}"
+                      download
+                      class="font-medium text-blue-600 :text-blue-500 hover:underline"
+                      >Download</a
+                    >
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Permis
+                  </th>
+                  <td class="px-6 py-4">
+                    <a
+                      href="/static/images/{{ driver.permis }}"
+                      download
+                      class="font-medium text-blue-600 :text-blue-500 hover:underline"
+                      >Download</a
+                    >
+                  </td>
+                </tr>
+                <tr
+                  class="odd:bg-white odd::bg-gray-900 even:bg-gray-50 even::bg-gray-800 border-b :border-gray-700"
+                >
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap :text-white"
+                  >
+                    Vehicule model
+                  </th>
+                  <td class="px-6 py-4">
+                    {{ driver.typev }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <a href="/conducteur" class="p-2 font-semibold text-indigo-500"
+            >Back home</a
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

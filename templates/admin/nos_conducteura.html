@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block body %}{% endblock %}
+    <header class="mb-4 flex items-center justify-between py-2 md:mb-6 md:py-4 xl:mb-8 border-b-2 border-gray-500 px-4 md:px-6">
+        <a href="#" class="inline-flex items-center gap-2 text-xl font-bold text-black md:text-2xl" aria-label="logo">
+            <svg width="75" height="74" viewBox="0 0 95 94" class="h-auto w-6 text-indigo-500" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M96 0V47L48 94H0V47L48 0H96Z" />
+            </svg>
+            Allo TAXICASA
+        </a>
+        <nav class="hidden gap-8 lg:flex">
+            <a href="/admin" class="text-md font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Demande conducteur</a>
+            <a href="/nos_conducteur" class="text-md font-semibold text-indigo-500">Nos conducteur</a>
+            <a href="/nos_passager" class="text-md font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Nos passager</a>
+        </nav>
+        <div class="relative inline-block text-left">
+            <div>
+                <button
+                    type="button"
+                    onclick="toggleMenu()"
+                    class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+                    id="menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                >
+                    Options
+                    <svg
+                        class="-mr-1 size-7 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            <div
+                id="menu"
+                class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+                tabindex="-1"
+            >
+                <div class="py-1" role="none">
+                    <a
+                        href="/logout"
+                        class="block px-4 py-2 text-sm text-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="menu-item-1"
+                    >Se Deconnecter</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            function toggleMenu() {
+                const menu = document.getElementById("menu");
+                menu.classList.toggle("hidden");
+            }
+
+            // Optionally, you can hide the menu when clicking outside of it
+            document.addEventListener("click", function (event) {
+                const menu = document.getElementById("menu");
+                const button = document.getElementById("menu-button");
+                if (!button.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.add("hidden");
+                }
+            });
+        </script>
+    </header> 
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg px-6">
+        <table id="drivers-table" class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th class="px-6 py-4">PHOTO</th>
+                    <th class="px-6 py-4">NOM COMPLET</th>
+                    <th class="px-6 py-4">TELEPHONE</th>
+                    <th class="px-6 py-4">VOITURE</th>
+                    <th class="px-6 py-4">PERMIS</th>
+                    <th class="px-6 py-4">CARTE GRISE</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for driveron in conducteurs_actifs %}
+                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <td class="px-6 py-4"><img src="/static/images/{{ driveron.user.img }}" class="w-10 h-10 py-1 rounded-full object-cover"></td>
+                    <td class="px-6 py-4">{{ driveron.user.name }}</td>
+                    <td class="px-6 py-4">+212 {{ driveron.user.phone }}</td>
+                    <td class="px-6 py-4"><a href="/static/images/{{ driveron.voiture }}" download class="font-medium text-blue-600 :text-blue-500 hover:underline">Download</a></td>
+                    <td class="px-6 py-4"><a href="/static/images/{{ driveron.permis }}" download class="font-medium text-blue-600 :text-blue-500 hover:underline">Download</a></td>
+                    <td class="px-6 py-4"><a href="/static/images/{{ driveron.carte }}" download class="font-medium text-blue-600 :text-blue-500 hover:underline">Download</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#drivers-table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/French.json"
+                }
+            });
+        });
+    </script>
+</body>
+</html>

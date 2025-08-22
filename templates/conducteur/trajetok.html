@@ -1,0 +1,395 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+     body {
+         font-family: Arial, sans-serif;
+         background-color: #fff;
+     }
+     .page-container {
+         max-width: 98%;
+         margin: 0 auto;
+         background-color: #fff;
+         padding: 20px;
+         border-radius: 8px;
+         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+     }
+     #map {
+         height: 600px; /* Taille plus grande pour la carte */
+         margin-bottom: 20px;
+         border-radius: 8px;
+         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+     }
+     h1 {
+         font-size: 24px;
+         color: #333;
+         border-bottom: 2px solid #ccc;
+         padding-bottom: 10px;
+         margin-bottom: 20px;
+     }
+     form {
+         width: 500px;
+         border: 2px solid #ccc;
+         padding: 20px;
+         border-radius: 8px;
+     }
+     label {
+         font-weight: bold;
+         display: block;
+         margin-bottom: 10px;
+     }
+     input[type="text"], input[type="tel"] {
+         width: 100%;
+         padding: 8px;
+         margin-bottom: 10px;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         box-sizing: border-box;
+         font-size: 16px;
+         color: #333;
+     }
+     input[type="text"][readonly], input[type="tel"][readonly] {
+         background-color: #f9f9f9;
+         cursor: not-allowed;
+     }
+     .container {
+         display: flex;
+         justify-content: space-between;
+         align-items: flex-start;
+         background-color: #fff;
+         border: 2px solid #ccc;
+         box-shadow: 0 0 10px rgba(0,0,0,0.1);
+         padding: 20px;
+         width: 100%;
+     }
+     .form-container {
+         width: 100%; /* Ajustez la largeur selon vos besoins */
+     }
+     .form-container:first-child {
+         border-right: 2px solid #ccc; /* Ligne de séparation entre les deux colonnes */
+         padding-right: 20px; /* Espacement à droite de la première colonne */
+         margin-right: 20px; /* Espacement entre les colonnes */
+     }
+     .form-container:last-child {
+         padding-left: 1px; /* Espacement à gauche de la deuxième colonne */
+         margin-left: 2px; /* Espacement entre les colonnes */
+     }
+     .form-container h1 {
+         font-size: 1.5rem;
+         margin-bottom: 15px;
+     }
+     .form-container div {
+         margin-bottom: 10px;
+     }
+     .form-container label {
+         display: block;
+         margin-bottom: 5px;
+     }
+     .form-container input {
+         width: 100%;
+         padding: 8px;
+         font-size: 1rem;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         box-sizing: border-box;
+     }
+     /* Style for the modal */
+     /* Style pour le modal */
+/* Style pour le modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 9999; /* Z-index élevé pour s'assurer que le modal apparaît au-dessus de tout */
+    left: 0;
+    top: 0;
+    width: 98%;
+    height: 98%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+}
+
+.modal-content {
+    position: relative;
+    margin: auto;
+    display: block;
+    max-width: 30%;
+    max-height: 30%;
+    margin-top: 130px;
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    border-radius: 50%; /* Pour afficher l'image en format circulaire */
+    object-fit: cover; /* Pour l'effet object-cover */
+    cursor: pointer; /* Pour l'effet cursor-pointer */
+}
+
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+ </style>
+
+ </style>
+</head>
+<body>
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+        <img src="/static/images/login.png" class="max-h-[100px] h-[99px] w-[220px] rounded-full aspect-square object-cover px-4">
+     <nav class="hidden gap-12 lg:flex">
+        <a href="/conducteur" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Demande trajets</a>
+        <a href="/trips_acceptes" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Trajets Acceptés</a>
+    </nav>
+     <div class="relative inline-block text-left">
+         <div>
+           <button
+             type="button"
+             onclick="toggleMenu()"
+             class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+             id="menu-button"
+             aria-expanded="false"
+             aria-haspopup="true"
+           >
+             Options
+             <svg
+               class="-mr-1 size-7 text-gray-400"
+               viewBox="0 0 20 20"
+               fill="currentColor"
+               aria-hidden="true"
+             >
+               <path
+                 fill-rule="evenodd"
+                 d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                 clip-rule="evenodd"
+               />
+             </svg>
+           </button>
+         </div>
+         <div
+           id="menu"
+           class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+           role="menu"
+           aria-orientation="vertical"
+           aria-labelledby="menu-button"
+           tabindex="-1"
+         >
+           <div class="py-1" role="none">
+             <a
+               href="/conducteur-info"
+               class="block px-4 py-2 text-sm text-gray-700"
+               role="menuitem"
+               tabindex="-1"
+               id="menu-item-0"
+               >Informations</a
+             >
+             <a
+               href="/logout"
+               class="block px-4 py-2 text-sm text-gray-700"
+               role="menuitem"
+               tabindex="-1"
+               id="menu-item-1"
+               >Se Deconnecter</a
+             >
+           </div>
+         </div>
+       </div>
+ 
+       <script>
+         function toggleMenu() {
+           const menu = document.getElementById("menu");
+           menu.classList.toggle("hidden");
+         }
+ 
+         // Optionally, you can hide the menu when clicking outside of it
+         document.addEventListener("click", function (event) {
+           const menu = document.getElementById("menu");
+           const button = document.getElementById("menu-button");
+           if (!button.contains(event.target) && !menu.contains(event.target)) {
+             menu.classList.add("hidden");
+           }
+         });
+       </script>
+ </header>
+ <div class="page-container" style="margin-top: -30px;">
+     <div class="page-container">
+        <div id="map"></div>
+
+        <div class="container">
+            <div class="form-container">
+                <h1>Informations du Trajet</h1>
+                <div>
+                    <label for="start_location">Départ</label>
+                    <input type="text" id="start_location" name="start_location" value="{{ trajet.start_location }}" readonly>
+                </div>
+                <div>
+                    <label for="end_location">Destination</label>
+                    <input type="text" id="end_location" name="end_location" value="{{ trajet.end_location }}" readonly>
+                </div>
+                <div>
+                    <label for="distance">Date et Heure </label>
+                    <input type="text" id="datetime" name="datetime" value="{{ trajet.datetime.strftime('Le %d-%m-%Y à %H:%M') }}" readonly>
+                </div>
+                <div>
+                    <label for="distance">Distance (KM)</label>
+                    <input type="text" id="distance" name="distance" value="{{ trajet.distance }}" readonly>
+                </div>
+                <div>
+                    <label for="distance">Prix (DH)</label>
+                    <input type="text" id="prix" name="prix" value="{{ trajet.prix }}" readonly>
+                </div>
+            </div>
+            <div class="form-container">
+                <h1>Informations du passager</h1>
+                <div>
+                    <label for="passager_image">Profil du passager</label>
+                    <img id="passager_image" src="/static/images/{{ passager.img }}" class="max-h-[50px] h-[50px] w-[50px] rounded-full aspect-square object-cover cursor-pointer" alt="Image du passager" onclick="openModal()">
+                </div>
+                
+                <!-- Modal pour afficher l'image agrandie -->
+                <div id="imageModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <img id="modalImage" src="" alt="Image agrandie">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="passager_name">Nom du passager</label>
+                    <input type="text" id="passager_name" name="passager_name" value="{{ passager.name }}" readonly>
+                </div>
+                <div>
+                    <label for="passager_phone">Téléphone du passager</label>
+                    <input type="text" id="passager_phone" name="passager_phone" value="+212 {{ passager.phone }}" readonly>
+                </div>
+                <div>
+                    <label for="passager_email">Email du passager</label>
+                    <input type="text" id="passager_email" name="passager_email" value="{{ passager.email }}" readonly>
+                </div>
+                <div>
+                    <label for="passager_etat">Etat du trajet</label>
+                    <input type="text" id="passager_etat" name="passager_etat" value="{% if trajet.etat %}accepte{% else %}non accepte{% endif %}" readonly>
+                </div>
+            </div>
+
+    <!-- Inclusion des bibliothèques Leaflet et Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+
+    <!-- Conteneur pour la carte Leaflet -->
+    <div id="map" style="height: 400px;"></div>
+
+<script>
+     // Function to calculate the distance between two points using the Haversine formula
+     function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Radius of the earth in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+            0.5 - Math.cos(dLat) / 2 +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            (1 - Math.cos(dLon)) / 2;
+        return R * 2 * Math.asin(Math.sqrt(a));
+    }
+    
+    // Function to calculate the price based on the distance
+    function calculatePrice(distance) {
+            const pricePerKm = 10; // Price per kilometer
+            return distance * pricePerKm;
+    }
+    // Récupération des données du serveur pour le trajet
+    const trajet = {
+        start_latitude: parseFloat("{{ trajet.start_latitude }}"),
+        start_longitude: parseFloat("{{ trajet.start_longitude }}"),
+        end_latitude: parseFloat("{{ trajet.end_latitude }}"),
+        end_longitude: parseFloat("{{ trajet.end_longitude }}"),
+        start_location: "{{ trajet.start_location }}",
+        end_location: "{{ trajet.end_location }}"
+    };
+
+    const passager = {
+        id: "{{ passager.id }}",
+        name: "{{ passager.name }}",
+        phone: "{{ passager.phone }}",
+        email: "{{ passager.email }}",
+        photo: "{{ passager.photo }}"
+
+    };
+        
+        // document.getElementById('user_name').value = user.name;
+   
+    // Calcul de la distance entre les points de départ et d'arrivée
+    var distance = calculateDistance(trajet.start_latitude, trajet.start_longitude, trajet.end_latitude, trajet.end_longitude).toFixed(2);
+    // Calcul du prix
+    var price = calculatePrice(distance).toFixed(2);    
+    
+    document.getElementById('distance').value = distance + " KM";
+    document.getElementById('prix').value =  price + " DH";
+    //document.getElementById('distance').value = distance;
+
+    // Création de la carte Leaflet
+    var map = L.map('map').setView([trajet.start_latitude, trajet.start_longitude], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+    // Ajout des marqueurs pour le départ et l'arrivée
+    L.marker([trajet.start_latitude, trajet.start_longitude]).addTo(map).bindPopup('Départ').openPopup();
+    L.marker([trajet.end_latitude, trajet.end_longitude]).addTo(map).bindPopup('Arrivée').openPopup();
+
+    // Configuration de Leaflet Routing Machine pour afficher l'itinéraire
+    L.Routing.control({
+        waypoints: [
+            L.latLng(trajet.start_latitude, trajet.start_longitude),
+            L.latLng(trajet.end_latitude, trajet.end_longitude)
+        ],
+        routeWhileDragging: true,
+        lineOptions: {
+            styles: [{ color: '#3388ff', opacity: 0.7, weight: 5 }]
+        },
+        createMarker: function(i, waypoint, n) {
+            // Retourne un marqueur vide pour ne pas afficher de marqueur sur les points de départ et d'arrivée
+            return null;
+        }
+    }).addTo(map);
+        // Fonction pour ouvrir le modal et afficher l'image agrandie
+        // Fonction pour ouvrir le modal et afficher l'image agrandie
+        // Fonction pour ouvrir le modal et afficher l'image agrandie
+        function openModal() {
+            var modal = document.getElementById("imageModal");
+            var modalImg = document.getElementById("modalImage");
+            var img = document.getElementById("passager_image");
+
+            modal.style.display = "block";
+            modalImg.src = img.src;
+        }
+
+        // Fonction pour fermer le modal
+        function closeModal() {
+            var modal = document.getElementById("imageModal");
+            modal.style.display = "none";
+        }
+
+        // Fermer le modal en cliquant en dehors de l'image
+        window.onclick = function(event) {
+            var modal = document.getElementById("imageModal");
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+
+</body>
+</html>

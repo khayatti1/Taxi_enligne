@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block body %}{% endblock %}
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+        <img src="/static/images/login.png" class="max-h-[100px] h-[99px] w-[220px] rounded-full aspect-square object-cover px-4">
+        <nav class="hidden gap-8 lg:flex">
+            <a href="{{ url_for('admin') }}?conducteurs={{ conducteurs_inactifs|length }}" class="text-md font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">
+            Demande conducteur ({{ conducteurs_inactifs|length }})</a>      
+            <a href="{{ url_for('nos_conducteur') }}?conducteurs={{ conducteurs_actifs|length }}" class="text-md font-semibold text-indigo-500">
+              Nos conducteurs ({{ conducteurs_actifs|length }})
+            </a>
+             <a href="{{ url_for('nos_passager') }}?passagers={{ passagers|length }}" class="text-md font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">
+              Nos passagers ({{ passagers|length }})
+            </a>
+        </nav>
+        <div class="relative inline-block text-left">
+            <div>
+                <button
+                    type="button"
+                    onclick="toggleMenu()"
+                    class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+                    id="menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true"
+                >
+                    Options
+                    <svg
+                        class="-mr-1 size-7 text-gray-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                    >
+                        <path
+                            fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                            clip-rule="evenodd"
+                        />
+                    </svg>
+                </button>
+            </div>
+
+            <div
+                id="menu"
+                class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="menu-button"
+                tabindex="-1"
+            >
+                <div class="py-1" role="none">
+                    <a
+                        href="/logout"
+                        class="block px-4 py-2 text-sm text-gray-700"
+                        role="menuitem"
+                        tabindex="-1"
+                        id="menu-item-1"
+                    >Se Deconnecter</a>
+                </div>
+            </div>
+        </div>
+        <script>
+            function toggleMenu() {
+                const menu = document.getElementById("menu");
+                menu.classList.toggle("hidden");
+            }
+
+            // Optionally, you can hide the menu when clicking outside of it
+            document.addEventListener("click", function (event) {
+                const menu = document.getElementById("menu");
+                const button = document.getElementById("menu-button");
+                if (!button.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.add("hidden");
+                }
+            });
+        </script>
+    </header> 
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg m-6" style="margin-top: -40px;">
+        <div class="flex items-center justify-between flex-column flex-wrap md:flex-row space-y-4 md:space-y-0 pb-4 bg-white :bg-gray-900">
+            <div class="p-2">
+                <div id="dropdownAction" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 :bg-gray-700 :divide-gray-600">
+                    <ul class="py-1 text-sm text-gray-700 :text-gray-200" aria-labelledby="dropdownActionButton">
+                    </ul>
+                    <div class="py-1">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 :hover:bg-gray-600 :text-gray-200 :hover:text-white">Delete User</a>
+                    </div>
+                </div>
+            </div>
+            <label for="table-search" class="sr-only">Search</label>
+            <div class="relative p-2">
+                <div class="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-5 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500 :text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="text" id="table-search-users" class="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 :bg-gray-700 :border-gray-600 :placeholder-gray-400 :text-white :focus:ring-blue-500 :focus:border-blue-500" placeholder="Search for users">
+            </div>
+        </div>
+        <table class="w-full text-sm text-left rtl:text-right text-gray-500 :text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 :bg-gray-700 :text-gray-400">
+                <tr>
+                <th class="px-6 py-4">PHOTO</th>
+                <th class="px-6 py-4">NOM COMPLET</th>
+                <th class="px-6 py-4">TELEPHONE</th>
+                <th class="px-6 py-4">VOITURE</th>
+                <th class="px-6 py-4">PERMIS</th>
+                <th class="px-6 py-4">CARTE GRISE</th>
+                </tr>
+            </thead>
+            <tbody id="drivers-table">
+                {% for driveron in conducteurs_actifs %}
+                <tr class="bg-white border-b :bg-gray-800 :border-gray-700">
+                    <td class="px-6 py-4"><img src="/static/images/{{  driveron.user.img }}" class="max-h-[50px] h-[50px] w-[50px] rounded-full aspect-square object-cover">
+                    <td class="px-6 py-4">{{ driveron.user.name }}</td>
+                    <td class="px-6 py-4">+212 {{ driveron.user.phone }}</td>  
+                    <td class="px-6 py-4"><a href="/static/images/{{ driveron.voiture }}" download class="font-medium text-blue-600 :text-blue-500 hover:underline">Download</a>
+                    <td class="px-6 py-4"><a href="/static/images/{{ driveron.permis }}" download class="font-medium text-blue-600 :text-blue-500 hover:underline">Download</a>
+                    <td class="px-6 py-4"><a href="/static/images/{{  driveron.carte }}" download class="font-medium text-blue-600 :text-blue-500 hover:underline">Download</a>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.getElementById('table-search-users').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#drivers-table tr');
+
+            rows.forEach(row => {
+                const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                const phone = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                const voiture = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+                const permis = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
+                const carte = row.querySelector('td:nth-child(6)').textContent.toLowerCase();
+
+                if (name.includes(searchTerm) || phone.includes(searchTerm) || voiture.includes(searchTerm) || permis.includes(searchTerm) || carte.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+{% extends 'base.html' %} {% block head %}
+<title>Home</title>
+{% endblock %} {% block body %}
+<section class="bg-gray-50 dark:bg-gray-900">
+  <!-- hero - start -->
+<div class="bg-white pb-6 sm:pb-8 lg:pb-12">
+  <div class="mx-auto max-w-screen-2xl ">
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+      <img src="/static/images/login.png" class="max-h-[100px] h-[99px] w-[220px] rounded-full aspect-square object-cover px-4">
+      <nav class="hidden gap-12 lg:flex">
+        <a href="/login" class="text-lg font-semibold text-indigo-500">Home</a>
+        <a href="/login" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Avantage</a>
+        <a href="/login" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Utilisateur</a>
+      </nav>
+
+      <a href="/incription_conducteur" class="hidden rounded-lg bg-gray-200 px-8 py-3 text-center text-sm font-semibold text-gray-500 outline-none ring-indigo-300 transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base lg:inline-block">Inscription de conducteur</a>
+
+      <button type="button" class="inline-flex items-center gap-2 rounded-lg bg-gray-200 px-2.5 py-2 text-sm font-semibold text-gray-500 ring-indigo-300 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h6a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd" />
+        </svg>
+    <div class="border-t border-gray-800 py-8 text-center text-sm text-gray-400"></div>
+      </button>
+      <!-- buttons - end -->
+    </header>
+
+    <section class="flex flex-col lg:flex-row lg:items-center lg:gap-0" style="margin-left: 180px; height: 500px;">
+      <!-- content - start -->
+      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div class="p-6 md:p-8 space-y-4 md:space-y-6">
+          <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+            Sign in to your account
+          </h1>
+          <form class="space-y-4 md:space-y-8" action="/auth-callback" method="post">
+            <div>
+              <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your email</label>
+              <input type="email" name="email" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required="">
+            </div>
+            <div>
+              <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
+              <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required="">
+            </div>
+            <button class="w-full block rounded-lg bg-gray-800/80 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-gray-700 focus-visible:ring active:bg-gray-600 md:text-base">Log in</button>
+            <p class="text-center font-light text-gray-500 dark:text-gray-400">
+              Don’t have an account yet? <a href="/inscription" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Inscription</a>
+            </p>
+          </form>
+        </div>
+      </div>
+      <!-- content - end -->
+      <div class="h-48 lg:h-auto xl:w-5/12 overflow-hidden rounded-lg bg-gray-100 shadow-lg" style="margin-left: 120px; height: 440px;" >
+        <img src="/static/images/qq.gif" loading="lazy" alt="Image" class="h-full w-full object-cover object-center" />
+      </div>
+      <!-- image - end -->
+    
+    </section>
+    
+    
+  </div>
+</div>
+<!-- hero - end -->
+
+<!-- features - start -->
+<div class="bg-white py-6 sm:py-8 lg:py-12">
+  <div class="mx-auto max-w-screen-2xl px-4 md:px-8">
+    <!-- text - start -->
+    <div class="mb-10 md:mb-16">
+      <h2 id="tt" class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Notre avantage concurrentiel</h2>
+
+      <p class="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg">Notre application de taxi en ligne se distingue par une interface intuitive et conviviale, 
+        des services disponibles 24/7, une sécurité renforcée grâce à la vérification des chauffeurs et au suivi des trajets en temps réel</p>
+    </div>
+    <!-- text - end -->
+
+    <div class="grid gap-8 sm:grid-cols-2 md:gap-12 xl:grid-cols-3 xl:gap-16">
+      <!-- feature - start -->
+      <div class="flex gap-4 md:gap-6">
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg md:h-14 md:w-14 md:rounded-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+            </svg>
+          </div>
+  
+          <div>
+            <h3 class="mb-2 text-lg font-semibold md:text-xl">Rapidité</h3>
+            <p class="mb-2 text-gray-500">Grâce à une interface utilisateur optimisée et des algorithmes de géolocalisation avancés, vous pouvez réserver un taxi en quelques secondes </p>
+          </div>
+        </div>
+      <!-- feature - end -->
+
+      <!-- feature - start -->
+      <div class="flex gap-4 md:gap-6">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg md:h-14 md:w-14 md:rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+        </div>
+
+        <div>
+          <h3 class="mb-2 text-lg font-semibold md:text-xl">Sécurité et Fiabilité</h3>
+          <p class="mb-2 text-gray-500">Garantir la sécurité et la fiabilité de chaque trajet. Tous nos chauffeurs sont soigneusement vérifiés et formés pour assurer un service professionnel.</p>
+        </div>
+      </div>
+      <!-- feature - end -->
+
+      <!-- feature - start -->
+      <div class="flex gap-4 md:gap-6">
+        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-indigo-500 text-white shadow-lg md:h-14 md:w-14 md:rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+          </svg>
+        </div>
+
+        <div>
+          <h3 class="mb-2 text-lg font-semibold md:text-xl">Fiabilité Cloud</h3>
+          <p class="mb-2 text-gray-500">Propulsée par une infrastructure cloud robuste, notre solution de taxi en ligne assure une disponibilité continue et une performance optimale. 
+          </p>
+        </div>
+      </div>
+      <!-- feature - end -->
+
+      <!-- feature - start -->
+     
+      <!-- feature - end -->
+
+      <!-- feature - start -->
+     
+      <!-- feature - end -->
+
+      <!-- feature - start -->
+
+      <!-- feature - end -->
+    </div>
+  </div>
+</div>
+<!-- features - end -->
+
+<!-- logo cloud - start -->
+<!--  -->
+<!-- logo cloud - end -->
+
+<!-- stats - start -->
+<div class="bg-white py-6 sm:py-8 lg:py-12">
+  <div class="mx-auto max-w-screen-xl px-4 md:px-8">
+    <!-- text - start -->
+    <div class="mb-10 md:mb-16">
+      <h2 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Notre équipe en chiffres</h2>
+
+      <p class="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg">Ces chiffres reflètent notre engagement à fournir un service de taxi en ligne de haute qualité et à satisfaire pleinement nos utilisateurs.
+      </p>
+    </div>
+    <!-- text - end -->
+
+    <div class="grid grid-cols-2 gap-8 md:grid-cols-4 md:gap-0 md:divide-x">
+      <!-- stat - start -->
+      <div class="flex flex-col items-center md:p-4">
+        <div class="text-xl font-bold text-indigo-500 sm:text-2xl md:text-3xl">200+</div>
+        <div class="text-sm font-semibold sm:text-base">Demande Conducteur</div>
+      </div>
+      <!-- stat - end -->
+
+      <!-- stat - start -->
+      <div class="flex flex-col items-center md:p-4">
+        <div class="text-xl font-bold text-indigo-500 sm:text-2xl md:text-3xl">200+</div>
+        <div class="text-sm font-semibold sm:text-base">Nos Conducteur</div>
+      </div>
+
+      <!-- stat - start -->
+      <div class="flex flex-col items-center md:p-4">
+        <div class="text-xl font-bold text-indigo-500 sm:text-2xl md:text-3xl">500+</div>
+        <div class="text-sm font-semibold sm:text-base">Passager</div>
+      </div>
+      <!-- stat - end -->
+
+      <!-- stat - start -->
+      <div class="flex flex-col items-center md:p-4">
+        <div class="text-xl font-bold text-indigo-500 sm:text-2xl md:text-3xl">10+</div>
+        <div class="text-sm font-semibold sm:text-base">responsable </div>
+      </div>
+      <!-- stat - end -->
+    </div>
+  </div>
+</div>
+<!-- stats - end -->
+
+<footer class="mx-auto max-w-screen-2xl md:px-0">
+  <div class="border-t border-gray-800 py-8 text-center text-sm text-gray-400">© 2024 - Present Flowrift. All rights reserved.</div>
+</footer>
+
+</section>
+{% endblock %}
+
+{% block script %}
+<script>
+  var notyf = new Notyf();
+
+  $("form").submit(function (event) {
+    event.preventDefault();
+    var serializedData = $(this).serialize();
+    request = $.ajax({
+      url: $(this).attr("action"),
+      type: $(this).attr("method"),
+      data: serializedData,
+      success: () => {
+        notyf.success('Logged In');
+        window.open('/check', '_current')
+      },
+      error: (e) => {
+        notyf.error(e.responseJSON.error);
+      },
+    });
+  });
+</script>
+{% endblock %}

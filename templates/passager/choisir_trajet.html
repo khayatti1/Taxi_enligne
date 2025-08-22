@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        #maps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .map-container {
+            flex: 1;
+            padding: 5px;
+            min-width: 200px;
+            text-align: center;
+        }
+        .map {
+            height: 355px;
+            width: 735px;
+            margin-left: 7px;
+
+        }
+        #route-info {
+            margin-top: 10px;
+        }
+        .vertical-line {
+            width: 1px;
+            background-color: #cccccc;
+            margin: 0 10px;
+        }
+        .btn {
+            background-color: #1e3a8a; /* Blue color */
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 2px 1px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .btn-primary, .btn-success, .btn-info {
+            background-color: #1e3a8a; /* Blue color */
+        }
+        .form-control {
+            width: calc(100% - 12px);
+            padding: 5px;
+            margin: 0 auto;
+            border: 2px solid #1e3a8a; /* Blue border */
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .alert-secondary {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+        <img src="/static/images/login.png" class="max-h-[100px] h-[99px] w-[220px] rounded-full aspect-square object-cover px-4">
+        <nav class="hidden gap-8 lg:flex">
+            <a href="/choisir_trajet" class="text-md font-semibold text-indigo-500">Choisir-trajet</a>
+        </nav>
+        <div class="relative inline-block text-left">
+            <div>
+              <button
+                type="button"
+                onclick="toggleMenu()"
+                class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+                id="menu-button"
+                aria-expanded="false"
+                aria-haspopup="true"
+              >
+                Options
+                <svg
+                  class="-mr-1 size-7 text-gray-400"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+    
+            <div
+              id="menu"
+              class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+              role="menu"
+              aria-orientation="vertical"
+              aria-labelledby="menu-button"
+              tabindex="-1"
+            >
+              <div class="py-1" role="none">
+                <a
+                  href="/passager"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-0"
+                  >Informations</a
+                >
+                <a
+                  href="/logout"
+                  class="block px-4 py-2 text-sm text-gray-700"
+                  role="menuitem"
+                  tabindex="-1"
+                  id="menu-item-1"
+                  >Se Deconnecter</a
+                >
+              </div>
+            </div>
+          </div>
+    
+          <script>
+            function toggleMenu() {
+              const menu = document.getElementById("menu");
+              menu.classList.toggle("hidden");
+            }
+    
+            // Optionally, you can hide the menu when clicking outside of it
+            document.addEventListener("click", function (event) {
+              const menu = document.getElementById("menu");
+              const button = document.getElementById("menu-button");
+              if (!button.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.add("hidden");
+              }
+            });
+          </script>
+    </header>
+    <div class="container" id="maps"  style="margin-top: -30px;">
+        <div class="map-container">
+            <h4>Départ</h4>
+            <input type="text" id="start_location_name" name="start_location_name" class="form-control mb-2" placeholder="Entrez le départ" />
+            <button class="btn btn-primary mb-2" onclick="searchLocation('start_location_name')">Rechercher Départ</button>
+            <div id="map1" class="map mt-2"></div>
+            <p id="start-coords" class="mt-2 text-sm">Cliquez sur la carte pour sélectionner le départ.</p>
+        </div>
+        <div class="vertical-line"></div>
+        <div class="map-container">
+            <h4>Destination</h4>
+            <input type="text" id="end_location_name" name="end_location_name" class="form-control mb-2" placeholder="Entrez la destination" />
+            <button class="btn btn-success mb-2" onclick="searchLocation('end_location_name')">Rechercher Destination</button>
+            <div id="map2" class="map mt-2"></div>
+            <p id="end-coords" class="mt-2 text-sm">Cliquez sur la carte pour sélectionner la destination.</p>
+        </div>
+    </div>
+    
+    <div class="text-center">
+        <label for="datetime" class="form-label mb-2">Date et heure du trajet:</label><br>
+        <input type="datetime-local" id="datetime" name="datetime" class="form-control mt-2"  style="width: 400px;"/>
+        <button class="btn btn-info mt-2" onclick="confirmRoute()">Confirmer Trajet</button>
+    </div>
+    
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map1 = L.map('map1').setView([48.8566, 2.3522], 13);
+        var map2 = L.map('map2').setView([48.8566, 2.3522], 13);
+        var startMarker, endMarker;
+        var startCoords, endCoords;
+    
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map1);
+    
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        }).addTo(map2);
+    
+        // Fonction pour la recherche inversée (reverse geocoding)
+        function reverseGeocode(latlng, type) {
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latlng.lat}&lon=${latlng.lng}`)
+                .then(response => response.json())
+                .then(data => {
+                    var displayName = data.display_name; // Nomination du lieu
+                    var map = type === 'start_location_name' ? map1 : map2;
+    
+                    if (type === 'start_location_name') {
+                        if (startMarker) {
+                            map.removeLayer(startMarker);
+                        }
+                        startCoords = [latlng.lat, latlng.lng];
+                        startMarker = L.marker(startCoords).addTo(map);
+                        document.getElementById('start-coords').innerText = `${displayName}`;
+                        document.getElementById('start_location_name').value = displayName; // Met à jour la barre de recherche
+                    } else {
+                        if (endMarker) {
+                            map.removeLayer(endMarker);
+                        }
+                        endCoords = [latlng.lat, latlng.lng];
+                        endMarker = L.marker(endCoords).addTo(map);
+                        document.getElementById('end-coords').innerText = `${displayName}`;
+                        document.getElementById('end_location_name').value = displayName; // Met à jour la barre de recherche
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur de géocodage inverse:', error);
+                });
+        }   
+        // Événement click sur la carte pour démarrer la recherche inversée
+        map1.on('click', function(e) {
+            reverseGeocode(e.latlng, 'start_location_name');
+        });
+    
+        map2.on('click', function(e) {
+            reverseGeocode(e.latlng, 'end_location_name');
+        });
+    
+        function searchLocation(type) {
+            var input = type === 'start_location_name' ? document.getElementById('start_location_name').value : document.getElementById('end_location_name').value;
+            var map = type === 'start_location_name' ? map1 : map2;
+    
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        var displayName = data[0].display_name; // Nomination du lieu
+                        var lat = parseFloat(data[0].lat);
+                        var lon = parseFloat(data[0].lon);
+                        map.setView([lat, lon], 13);
+    
+                        if (type === 'start_location_name') {
+                            if (startMarker) {
+                                map1.removeLayer(startMarker);
+                            }
+                            startCoords = [lat, lon];
+                            startMarker = L.marker(startCoords).addTo(map1);
+                            document.getElementById('start-coords').innerText = ` ${displayName}`;
+                            document.getElementById('start_location_name').value = displayName; // Met à jour la barre de recherche
+                        } else {
+                            if (endMarker) {
+                                map2.removeLayer(endMarker);
+                            }
+                            endCoords = [lat, lon];
+                            endMarker = L.marker(endCoords).addTo(map2);
+                            document.getElementById('end-coords').innerText = `${displayName}`;
+                            document.getElementById('end_location_name').value = displayName; // Met à jour la barre de recherche
+                        }
+                    } else {
+                        alert('Localisation non trouvée.');
+                    }
+                });
+        }
+   // Variables globales pour les coordonnées
+        var startCoords = null;
+        var endCoords = null;
+
+        function getCurrentDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+        
+       
+        function confirmRoute() {
+            // Vérifie que startCoords et endCoords sont définis et non nuls
+            if (!startCoords || !endCoords) {
+                alert("Veuillez sélectionner un départ et une destination.");
+                return;
+            }
+
+            // Récupère les noms des emplacements de départ et d'arrivée
+            const startLocationName = document.getElementById('start_location_name').value;
+            const endLocationName = document.getElementById('end_location_name').value;
+
+            // Fonction pour obtenir la date et l'heure actuelles au format requis pour datetime-local
+            function getCurrentDateTime() {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            // Définir la valeur minimale pour le champ datetime-local
+            const dateTimeInput = document.getElementById('datetime');
+            dateTimeInput.min = getCurrentDateTime();
+
+            // Récupère la date et l'heure choisies
+            const datetime = dateTimeInput.value;
+
+            // Vérifie que la date et l'heure sélectionnées ne sont pas dans le passé
+            if (new Date(datetime) < new Date()) {
+                alert("Veuillez sélectionner une date et une heure valides.");
+                return;
+            }
+
+            // Prépare les données à envoyer au serveur
+            const routeData = {
+                start_latitude: startCoords[0],
+                start_longitude: startCoords[1],
+                end_latitude: endCoords[0],
+                end_longitude: endCoords[1],
+                start_location: startLocationName,
+                end_location: endLocationName,
+                datetime: datetime
+            };
+
+            // Envoie les données au serveur via fetch
+            fetch('/save_trajet', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(routeData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Réponse reçue du serveur:", data);
+
+                // Vérifie si l'enregistrement du trajet a réussi
+                if (data.success) {
+                    // Redirection vers la page de détail du trajet une fois confirmé
+                    window.location.href = `/trajetReserver/${data.trajet_id}`;
+                } else {
+                    // Affiche l'erreur côté client si l'enregistrement a échoué
+                    console.error("Erreur lors de l'enregistrement du trajet:", data.error);
+                    document.getElementById('route-details').innerText = "Erreur lors de l'enregistrement du trajet: " + data.error;
+                }
+            })
+            .catch(error => {
+                // Affiche toute erreur de fetch ou de traitement des données
+                console.error('Erreur lors de la requête fetch:', error);
+                document.getElementById('route-details').innerText = "Erreur lors de l'enregistrement du trajet.";
+            });
+        }
+
+        // Définir la valeur minimale pour le champ datetime-local lorsque la page se charge
+        window.onload = function() {
+            const dateTimeInput = document.getElementById('datetime');
+            dateTimeInput.min = getCurrentDateTime();
+        };
+
+        function getCurrentDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+    </script>
+</body>
+</html>

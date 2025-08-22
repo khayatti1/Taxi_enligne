@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <title>Conducteur Trips</title>
+</head>
+<body>
+  <header class="mb-8 flex items-center justify-between md:mb-16 md:py-0 border-b-2 border-gray-500 md:px-8" style="height: 90px;">
+    <img src="/static/images/login.png" class="max-h-[100px] h-[99px] w-[220px] rounded-full aspect-square object-cover px-4">
+    <nav class="hidden gap-12 lg:flex">
+       <a href="/conducteur" class="text-lg font-semibold text-indigo-500">Demande trajets</a>
+       <a href="/trips_acceptes" class="text-lg font-semibold text-gray-600 transition duration-100 hover:text-indigo-500 active:text-indigo-700">Trajets Acceptés</a>
+   </nav>
+    <div class="relative inline-block text-left">
+        <div>
+          <button
+            type="button"
+            onclick="toggleMenu()"
+            class="text-lg font-semibold px-6 py-2 inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex items-center"
+            id="menu-button"
+            aria-expanded="false"
+            aria-haspopup="true"
+          >
+            Options
+            <svg
+              class="-mr-1 size-7 text-gray-400"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div
+          id="menu"
+          class="hidden absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="menu-button"
+          tabindex="-1"
+        >
+          <div class="py-1" role="none">
+            <a
+              href="/conducteur-info"
+              class="block px-4 py-2 text-sm text-gray-700"
+              role="menuitem"
+              tabindex="-1"
+              id="menu-item-0"
+              >Informations</a
+            >
+            <a
+              href="/logout"
+              class="block px-4 py-2 text-sm text-gray-700"
+              role="menuitem"
+              tabindex="-1"
+              id="menu-item-1"
+              >Se Deconnecter</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <script>
+        function toggleMenu() {
+          const menu = document.getElementById("menu");
+          menu.classList.toggle("hidden");
+        }
+
+        // Optionally, you can hide the menu when clicking outside of it
+        document.addEventListener("click", function (event) {
+          const menu = document.getElementById("menu");
+          const button = document.getElementById("menu-button");
+          if (!button.contains(event.target) && !menu.contains(event.target)) {
+            menu.classList.add("hidden");
+          }
+        });
+      </script>
+</header>
+    <div class="bg-white sm:py-0 lg:py-0" style="margin-top: -20px;">
+        <div class="mx-auto max-w-screen-lg px-4 md:px-8">
+            <div class="mb-6 sm:mb-10 lg:mb-16">
+                <h2 class="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Les trajets demander</h2>
+            </div>
+
+            <div class="mb-5 flex flex-col sm:mb-8 sm:divide-y sm:border-t sm:border-b pt-0">
+              {% if driver ,trips_with_passengers %}
+              {% for trip, passenger, driver in trips_with_passengers %}
+                        <div class="py-5 sm:py-8">
+                            <div class="flex flex-wrap gap-4 sm:py-2.5 lg:gap-6 pt-8">
+                                <div class="sm:-my-2.5">
+                                    <a href="#" class="group relative block h-40 w-24 overflow-hidden rounded-lg bg-gray-100 sm:h-56 sm:w-40">
+                                        <img src="{{ url_for('static', filename='images/' + passenger.img) }}" alt="{{ passenger.name }}" loading="lazy" class="h-full w-full object-cover object-center transition group-hover:scale-210">
+                                    </a>
+                                </div>
+                                <div class="flex flex-1 flex-col justify-between">
+                                    <div>
+                                        <a href="#" class="mb-1 inline-block text-lg font-bold text-gray-800 transition duration-100 hover:text-gray-500 lg:text-xl">
+                                            <strong>Trip ID:</strong> {{ trip.id }}<br>
+                                        </a>
+                                        <span class="block text-gray-500"><strong>Départ:</strong> {{ trip.start_location }}</span>
+                                        <span class="block text-gray-500"><strong>Arrivée:</strong> {{ trip.end_location }}</span>
+                                        <span class="block text-gray-500"><strong>Nom Complet:</strong> {{ passenger.name  }}</span>
+                                        <span class="block text-gray-500"><strong>Telephone:</strong> +212 {{ passenger.phone }}</span>
+                                    </div>
+                                    <div>
+                                        {% if trip.etat %}
+                                            <span class="mb-0 block font-bold text-green-500 md:text-lg py-2">Accepté</span>
+                                            
+                                        {% else %}
+                                            <span class="mb-0 block font-bold text-red-500 md:text-lg py-2">En Attente</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="flex w-full justify-between border-t pt-1 sm:w-auto sm:border-none sm:pt-8">
+                                  {% if current_driver and current_driver.id %}
+                                         <button type="submit" 
+                                            class="select-none text-sm font-bold text-indigo-500 transition duration-100 hover:text-indigo-600 active:text-indigo-700"
+                                            data-trip-id="{{ trip.id }}"
+                                            data-new-etat="{{ 'true' if trip.etat else 'false' }}"
+                                            data-conducteur-id="{{ current_driver.id }}"
+                                            onclick="updateRoute(this)">
+                                            Ajouter Trajet
+                                          </button>
+                                            {% endif %}                                                                                     
+                              </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    <p>No trips found.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <script>
+function updateRoute(button) {
+    var tripId = button.getAttribute('data-trip-id');
+    var newEtat = button.getAttribute('data-new-etat') === 'true';
+    var conducteurId = button.getAttribute('data-conducteur-id');
+
+    console.log("Trip ID:", tripId);
+    console.log("New Etat:", newEtat);
+    console.log("Conducteur ID:", conducteurId);
+
+    var routeData = {
+        trip_id: tripId,
+        new_etat: newEtat,
+        id_conducteur: conducteurId
+    };
+
+    fetch('/update_route', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(routeData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Réponse reçue du serveur:", data);
+
+        if (data.success) {
+            window.location.href = "/trips_acceptes";
+        } else {
+            console.error("Erreur lors de la mise à jour du trajet:", data.error);
+            alert("Erreur lors de la mise à jour du trajet: " + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de la requête fetch:', error);
+        alert("Erreur lors de la mise à jour du trajet.");
+    });
+}
+
+    </script>
+</body>
+</html>

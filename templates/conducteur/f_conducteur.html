@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% block body %}{% endblock %}
+    <div class="h-screen w-screen flex flex-col items-center justify-center">
+      <div class="border rounded-xl bg-gray-400/5 p-10 flex flex-col items-center justify-center gap-8">
+          <img src="/static/images/login.png" class="max-h-[100px] h-[100px] w-[220px] rounded-full aspect-square object-cover px-0">
+        <div class="text-center">
+          <h1 class="font-bold text-2xl">Nous vérifions actuellement votre compte</h1>
+          <h1 class="font-semibold text-xl">Cette étape peut prendre jusqu'à deux jours ouvrables</h1>
+        </div>
+        <div class="flex flex-col items-center justify-center">
+          <a href="/conducteur-info" class="rounded-lg bg-indigo-500/20 px-6 py-2 text-center text-lg outline-none ring-indigo-300 transition hover:bg-indigo-500/60 focus-visible:ring active:text-gray-700 md:text-indigo-500 lg:inline-block font-semibold duration-300">Vérifier mes informations et mes états</a>
+          <a href="/logout" class="p-2 font-semibold text-indigo-500">Se Deconnecter</a>
+        </div>
+    </div>  
+    </div> 
+</body>
+</html>
